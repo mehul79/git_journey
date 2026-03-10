@@ -2,20 +2,18 @@
 
 import { authClient } from "@/lib/auth-client";
 
-export default function Login() {
+export default function GithubLogin() {
 
   const login = async () => {
-    const { data, error } = await authClient.signIn.email({
-      email: "test@gmail.com",
-      password: "123456"
+    await authClient.signIn.social({
+      provider: "github",
+      callbackURL: "http://localhost:3000"
     });
-
-    console.log(data);
   };
 
   return (
-    <button onClick={login}>
-      Login
+    <button onClick={login} className="bg-blue-500 text-white px-4 py-2 rounded cursor-pointer">
+      Login with GitHub
     </button>
   );
 }

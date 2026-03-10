@@ -2,7 +2,7 @@
 
 import { authClient } from "@/lib/auth-client";
 
-export default function Profile() {
+export default function Dashboard() {
   const { data: session } = authClient.useSession();
 
   if (!session) return <div>Not logged in</div>;
