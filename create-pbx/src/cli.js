@@ -36,13 +36,13 @@ async function main() {
 
   // If still no name, prompt the user
   if (!projectName) {
-    projectName = await ask("📁 Enter project name (default: my-pba-app): ");
-    projectName = projectName.trim() || "my-pba-app";
+    projectName = await ask("📁 Enter project name (default: my-pbx-app): ");
+    projectName = projectName.trim() || "my-pbx-app";
   }
 
   const templateDir = path.resolve(__dirname, "..");
 
-  console.log(`🚀 Creating a new Prisma Better Auth project in: ${projectName}`);
+  console.log(`🚀 Creating a new PBX (Prisma Better-auth Express) project in: ${projectName}`);
 
   if (fs.existsSync(projectName)) {
     console.error(`❌ Error: Directory "${projectName}" already exists.`);
@@ -54,11 +54,7 @@ async function main() {
   fs.mkdirSync(projectName);
   process.chdir(projectName);
 
-  // 2. Initialize npm
-  console.log("📦 Initializing project...");
-  execSync("npm init -y", { stdio: "inherit" });
-
-  // 3. Copy files from template
+  // 2. Copy files from template
   console.log("📂 Copying template files...");
   const itemsToCopy = [
     "src",
@@ -66,16 +62,21 @@ async function main() {
     "tsconfig.json",
     "prisma.config.ts",
     ".env.example",
-    ".gitignore"
+    ".gitignore",
+    "package.template.json"
   ];
 
   itemsToCopy.forEach((item) => {
     const srcPath = path.join(templateDir, item);
-    const destPath = path.join(process.cwd(), item);
+    let destPath = path.join(process.cwd(), item);
+
+    if (item === "package.template.json") {
+      destPath = path.join(process.cwd(), "package.json");
+    }
 
     if (fs.existsSync(srcPath)) {
       if (item === "src") {
-        // Copy src while excluding cli.ts
+        // Copy src while excluding cli.js
         if (!fs.existsSync(destPath)) fs.mkdirSync(destPath, { recursive: true });
         const files = fs.readdirSync(srcPath);
         files.forEach(file => {
@@ -89,46 +90,26 @@ async function main() {
     }
   });
 
+  // 3. Update project name in package.json
+  const pkgPath = path.join(process.cwd(), "package.json");
+  const pkg = JSON.parse(fs.readFileSync(pkgPath, "utf-8"));
+  pkg.name = projectName;
+  fs.writeFileSync(pkgPath, JSON.stringify(pkg, null, 2));
+
   // 4. Ask to install dependencies
   const installDeps = await ask("📥 Do you want to install dependencies now? (y/n): ");
   rl.close();
 
   if (installDeps.toLowerCase() === "y" || installDeps.toLowerCase() === "yes") {
     console.log("📥 Installing dependencies...");
-    const deps = [
-      "express",
-      "prisma",
-      "better-auth",
-      "@prisma/client",
-      "cors",
-      "dotenv"
-    ];
-    const devDeps = [
-      "typescript",
-      "ts-node",
-      "nodemon",
-      "@types/express",
-      "@types/cors",
-      "@types/node"
-    ];
-
-    execSync(`npm install ${deps.join(" ")}`, { stdio: "inherit" });
-    execSync(`npm install -D ${devDeps.join(" ")}`, { stdio: "inherit" });
+    try {
+      execSync("npm install", { stdio: "inherit" });
+    } catch (error) {
+      console.error("❌ Failed to install dependencies. You may need to run 'npm install' manually.");
+    }
   } else {
     console.log("⚠️ Skipping dependency installation. You will need to run 'npm install' manually.");
   }
-
-  // 5. Update package.json in the new project to include scripts
-  const pkgPath = path.join(process.cwd(), "package.json");
-  const pkg = JSON.parse(fs.readFileSync(pkgPath, "utf-8"));
-  pkg.scripts = {
-    "dev": "nodemon --exec ts-node src/server.ts",
-    "build": "tsc",
-    "start": "node dist/server.js",
-    "generate": "prisma generate",
-    "studio": "prisma studio"
-  };
-  fs.writeFileSync(pkgPath, JSON.stringify(pkg, null, 2));
 
   console.log(`
 ✅ Project "${projectName}" created successfully!
