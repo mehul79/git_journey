@@ -1,20 +1,27 @@
 {
-  "name": "be",
-  "version": "1.0.0",
+  "name": "create-pba",
+  "version": "2.1.0",
   "description": "",
-  "main": "index.js",
+  "main": "src/server.ts",
   "bin": {
-      "create-express-better-auth": "./dist/cli.js"
-    },
+    "create-pba": "./src/cli.js"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon --exec ts-node src/server.ts",
-    "build": "tsc"
+    "dev": "nodemon --exec ts-node src/server.ts"
   },
+  "files": [
+    "src",
+    "prisma",
+    "tsconfig.json",
+    "prisma.config.ts",
+    ".env.example",
+    ".gitignore"
+  ],
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "commonjs",
+  "type": "module",
   "dependencies": {
     "@prisma/client": "^6.19.2",
     "better-auth": "^1.5.4",
@@ -27,6 +34,7 @@
   "devDependencies": {
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
+    "@types/node": "^25.5.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3"
   }
