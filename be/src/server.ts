@@ -1,7 +1,7 @@
 import express from "express";
 import { toNodeHandler, fromNodeHeaders } from "better-auth/node";
 import cors from "cors"; // Import the CORS middleware
-import { auth } from "/Users/mehulgupta/Developer/git_journey/be/src/lib/auth";
+import { auth } from "./lib/auth";
 const app = express();
 const port = 3005;
 
@@ -23,7 +23,8 @@ app.get("/api/me", async (req, res) => {
  	const session = await auth.api.getSession({
       headers: fromNodeHeaders(req.headers),
     });
-	return res.json(session);
+  console.log("hit")
+  return res.json(session);
 });
 
 

@@ -17,6 +17,6 @@ export const auth = betterAuth({
       }, 
     }, 
     trustedOrigins: [
-        "http://localhost:3000"
+        "http://localhost:3000" //change this to your frontend url
       ],
 });

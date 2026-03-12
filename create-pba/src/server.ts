@@ -1,9 +1,9 @@
 import express from "express";
 import { toNodeHandler, fromNodeHeaders } from "better-auth/node";
 import cors from "cors"; // Import the CORS middleware
-import { auth } from "/Users/mehulgupta/Developer/git_journey/be/src/lib/auth";
+import { auth } from "./lib/auth";
 const app = express();
-const port = 3005;
+const port = process.env.PORT
 
 app.use(
   cors({
